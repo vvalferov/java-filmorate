@@ -4,12 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmServiceImplTest {
     FilmService filmService = new FilmServiceImpl();
-    Film film = new Film(1, "TestFilm", "TestDescription", 100L, 70);
-    Film editedFilm = new Film(1, "TestFilm", "editedDescription", 100L, 70);
+    Film film = new Film(1, "TestFilm", "TestDescription", LocalDate.of(2021, 12, 11), 70);
+    Film editedFilm = new Film(1, "TestFilm", "editedDescription", LocalDate.of(2021, 12, 11), 70);
 
     @Test
     void addFilm() {

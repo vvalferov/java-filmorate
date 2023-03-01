@@ -1,28 +1,39 @@
 package ru.yandex.practicum.filmorate.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Service("FilmService")
 public class FilmServiceImpl implements FilmService {
     private final List<Film> allFilms = new ArrayList<>();
 
     @Override
     public Film addFilm(Film film) {
-        int id = film.getId();
-        allFilms.add(film);
-        log.info("Film {} has been added to list", id);
-        return getFilmById(id);
+        if (isFilmValid(film) && !allFilms.contains(film)) {
+            int id = film.getId();
+            allFilms.add(film);
+            log.info("Film {} has been added to list", id);
+            return getFilmById(id);
+        }
+        else
+            throw new FilmNotValidException();
     }
 
     @Override
     public Film editFilm(Film film) {
+        if (!isFilmValid(film))
+            throw new FilmNotValidException();
         int id = film.getId();
         Film oldFilm = getFilmById(id);
+        //Film oldFilm = allFilms.get(0);
         if (oldFilm != null) {
             allFilms.remove(oldFilm);
             allFilms.add(film);
@@ -47,5 +58,13 @@ public class FilmServiceImpl implements FilmService {
         }
         log.error("Film {} was not found", id);
         return null;
+    }
+
+    private boolean isFilmValid(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            log.error("Fields of film {} seem to be invalid", film.getId());
+            return false;
+        }
+        return true;
     }
 }
