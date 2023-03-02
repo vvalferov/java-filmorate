@@ -14,11 +14,16 @@ import java.util.List;
 @Service
 public class FilmServiceImpl implements FilmService {
     private final List<Film> allFilms = new ArrayList<>();
+    private long currentId = 1;
 
     @Override
     public Film addFilm(Film film) {
         if (isFilmValid(film) && !allFilms.contains(film)) {
-            long id = film.getId();
+            Long id = film.getId();
+            if (id == null) {
+                film.setId(getCurrentId());
+                id = film.getId();
+            }
             allFilms.add(film);
             log.info("Film {} has been added to list", id);
             return getFilmById(id);
@@ -65,5 +70,9 @@ public class FilmServiceImpl implements FilmService {
             return false;
         }
         return true;
+    }
+
+    private long getCurrentId() {
+        return currentId++;
     }
 }

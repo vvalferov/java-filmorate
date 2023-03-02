@@ -9,16 +9,22 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     private final List<User> allUsers = new ArrayList<>();
+    private long currentId = 1;
 
     @Override
     public User addUser(User user) {
         if (isUserValid(user) && !allUsers.contains(user)) {
-            long id = user.getId();
+            Long id = user.getId();
+            if (id == null) {
+                user.setId(getCurrentId());
+                id = user.getId();
+            }
             allUsers.add(user);
             log.info("User {} has been added to list", id);
             return getUserById(id);
@@ -49,9 +55,9 @@ public class UserServiceImpl implements UserService {
         return allUsers;
     }
 
-    private User getUserById(long id) {
+    private User getUserById(Long id) {
         for (User user : allUsers) {
-            if (user.getId() == id) {
+            if (Objects.equals(user.getId(), id)) {
                 return user;
             }
         }
@@ -64,10 +70,14 @@ public class UserServiceImpl implements UserService {
             log.error("Fields of user {} seem to be invalid", user.getLogin());
             return false;
         }
-        if (user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
             log.info("User's name was changed to {}", user.getName());
         }
         return true;
+    }
+
+    private long getCurrentId() {
+        return currentId++;
     }
 }
