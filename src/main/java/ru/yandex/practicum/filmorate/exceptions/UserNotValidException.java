@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
 public class UserNotValidException extends RuntimeException {
-    public UserNotValidException() {
-        super("This user is invalid. Check your input");
+    public UserNotValidException(long id) {
+        super("This user " + id + " is invalid. Check your input");
     }
 }

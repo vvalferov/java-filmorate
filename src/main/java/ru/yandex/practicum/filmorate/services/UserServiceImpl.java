@@ -11,26 +11,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service("UserService")
+@Service
 public class UserServiceImpl implements UserService {
     private final List<User> allUsers = new ArrayList<>();
 
     @Override
     public User addUser(User user) {
         if (isUserValid(user) && !allUsers.contains(user)) {
-            int id = user.getId();
+            long id = user.getId();
             allUsers.add(user);
             log.info("User {} has been added to list", id);
             return getUserById(id);
         }
-        throw new UserNotValidException();
+        throw new UserNotValidException(user.getId());
     }
 
     @Override
     public User editUser(User user) {
         if (!isUserValid(user))
-            throw new UserNotValidException();
-        int id = user.getId();
+            throw new UserNotValidException(user.getId());
+        long id = user.getId();
         User oldUser = getUserById(id);
         //User oldUser = allUsers.get(0);
         if (oldUser != null) {
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
             log.info("User {} has been edited", id);
             return getUserById(id);
         } else {
-            throw new UserNotExistException();
+            throw new UserNotExistException(id);
         }
     }
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         return allUsers;
     }
 
-    private User getUserById(int id) {
+    private User getUserById(long id) {
         for (User user : allUsers) {
             if (user.getId() == id) {
                 return user;

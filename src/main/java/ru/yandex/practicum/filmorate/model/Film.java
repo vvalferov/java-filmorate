@@ -13,10 +13,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Film {
-    private int id;
+    private long id;
     @NotBlank
     private String name;
-    @Size(max = 200)
+    @Size(max = 200, min = 1)
     private String description;
     private LocalDate releaseDate;
     @Positive

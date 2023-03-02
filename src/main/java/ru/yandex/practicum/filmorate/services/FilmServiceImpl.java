@@ -11,27 +11,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service("FilmService")
+@Service
 public class FilmServiceImpl implements FilmService {
     private final List<Film> allFilms = new ArrayList<>();
 
     @Override
     public Film addFilm(Film film) {
         if (isFilmValid(film) && !allFilms.contains(film)) {
-            int id = film.getId();
+            long id = film.getId();
             allFilms.add(film);
             log.info("Film {} has been added to list", id);
             return getFilmById(id);
         }
         else
-            throw new FilmNotValidException();
+            throw new FilmNotValidException(film.getId());
     }
 
     @Override
     public Film editFilm(Film film) {
         if (!isFilmValid(film))
-            throw new FilmNotValidException();
-        int id = film.getId();
+            throw new FilmNotValidException(film.getId());
+        long id = film.getId();
         Film oldFilm = getFilmById(id);
         //Film oldFilm = allFilms.get(0);
         if (oldFilm != null) {
@@ -40,7 +40,7 @@ public class FilmServiceImpl implements FilmService {
             log.info("Film {} has been edited", id);
             return getFilmById(id);
         } else {
-            throw new FilmNotExistException();
+            throw new FilmNotExistException(id);
         }
     }
 
@@ -50,7 +50,7 @@ public class FilmServiceImpl implements FilmService {
         return allFilms;
     }
 
-    private Film getFilmById(int id) {
+    private Film getFilmById(long id) {
         for (Film film : allFilms) {
             if (film.getId() == id) {
                 return film;
