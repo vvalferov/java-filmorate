@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;

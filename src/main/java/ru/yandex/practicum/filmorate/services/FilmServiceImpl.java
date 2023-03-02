@@ -22,8 +22,7 @@ public class FilmServiceImpl implements FilmService {
             allFilms.add(film);
             log.info("Film {} has been added to list", id);
             return getFilmById(id);
-        }
-        else
+        } else
             throw new FilmNotValidException(film.getId());
     }
 
