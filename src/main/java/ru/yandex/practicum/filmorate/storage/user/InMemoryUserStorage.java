@@ -38,15 +38,15 @@ public class InMemoryUserStorage implements UserStorage {
             throw new UserNotValidException(user.getId());
         long id = user.getId();
         User oldUser = getUserById(id);
-        //User oldUser = allUsers.get(0);
-        if (oldUser != null) {
-            allUsers.remove(oldUser);
-            allUsers.add(user);
-            log.info("User {} has been edited", id);
-            return getUserById(id);
-        } else {
-            throw new UserNotExistException(id);
-        }
+        allUsers.remove(oldUser);
+        allUsers.add(user);
+        log.info("User {} has been edited", id);
+        return getUserById(id);
+    }
+
+    @Override
+    public User getUser(Long id) {
+        return getUserById(id);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class InMemoryUserStorage implements UserStorage {
             }
         }
         log.error("User {} was not found", id);
-        return null;
+        throw new UserNotExistException(id);
     }
 
     private boolean isUserValid(User user) {

@@ -37,15 +37,15 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmNotValidException(film.getId());
         long id = film.getId();
         Film oldFilm = getFilmById(id);
-        //Film oldFilm = allFilms.get(0);
-        if (oldFilm != null) {
-            allFilms.remove(oldFilm);
-            allFilms.add(film);
-            log.info("Film {} has been edited", id);
-            return getFilmById(id);
-        } else {
-            throw new FilmNotExistException(id);
-        }
+        allFilms.remove(oldFilm);
+        allFilms.add(film);
+        log.info("Film {} has been edited", id);
+        return getFilmById(id);
+    }
+
+    @Override
+    public Film getFilm(Long id) {
+        return getFilmById(id);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             }
         }
         log.error("Film {} was not found", id);
-        return null;
+        throw new FilmNotExistException(id);
     }
 
     private boolean isFilmValid(Film film) {

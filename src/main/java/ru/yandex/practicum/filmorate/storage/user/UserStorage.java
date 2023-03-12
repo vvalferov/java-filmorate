@@ -11,5 +11,7 @@ public interface UserStorage {
 
     User editUser(User user);
 
+    User getUser(Long id);
+
     List<User> getAll();
 }
