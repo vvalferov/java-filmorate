@@ -1,7 +1,7 @@
-package ru.yandex.practicum.filmorate.services;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@Service
-public class UserServiceImpl implements UserService {
+@Component
+public class InMemoryUserStorage implements UserStorage {
     private final List<User> allUsers = new ArrayList<>();
     private long currentId = 1;
 

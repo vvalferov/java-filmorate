@@ -1,7 +1,7 @@
-package ru.yandex.practicum.filmorate.services;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service
-public class FilmServiceImpl implements FilmService {
+@Component
+public class InMemoryFilmStorage implements FilmStorage {
     private final List<Film> allFilms = new ArrayList<>();
     private long currentId = 1;
 

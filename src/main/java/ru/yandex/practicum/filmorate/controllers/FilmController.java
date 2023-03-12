@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.services.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -15,23 +15,23 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController {
     @Autowired
-    private FilmService filmService;
+    private FilmStorage filmStorage;
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         log.info("Entered POST film");
-        return ResponseEntity.ok().body(filmService.addFilm(film));
+        return ResponseEntity.ok().body(filmStorage.addFilm(film));
     }
 
     @PutMapping
     public ResponseEntity<Film> editFilm(@Valid @RequestBody Film film) {
         log.info("Entered PUT film");
-        return ResponseEntity.ok().body(filmService.editFilm(film));
+        return ResponseEntity.ok().body(filmStorage.editFilm(film));
     }
 
     @GetMapping
     public ResponseEntity<List<Film>> getAllFilms() {
         log.info("Entered GET film");
-        return ResponseEntity.ok().body(filmService.getAll());
+        return ResponseEntity.ok().body(filmStorage.getAll());
     }
 }
