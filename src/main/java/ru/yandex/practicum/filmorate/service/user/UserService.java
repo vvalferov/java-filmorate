@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
 
-@Service
 public interface UserService {
     Boolean addFriend(Long id, Long friendId);
 

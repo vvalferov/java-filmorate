@@ -1,30 +1,30 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    final UserServiceImpl userService;
-
-    @Autowired
-    public UserController(UserServiceImpl userService) {
-        this.userService = userService;
-    }
+    private final UserServiceImpl userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<User> findUser(@PathVariable Long id) {
         log.info("Entered GET user");
-        return ResponseEntity.ok().body(userService.userStorage.getUser(id));
+        return ResponseEntity.ok().body(userService.userStorage.findUser(id));
     }
 
     @PostMapping
@@ -67,5 +67,17 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         log.info("Entered GET user");
         return ResponseEntity.ok().body(userService.userStorage.getAll());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler
+    public Map<String, String> handleNotExistingUser(final UserNotExistException e) {
+        return Map.of("error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public Map<String, String> handleNotValidUser(final UserNotValidException e) {
+        return Map.of("error", e.getMessage());
     }
 }

@@ -1,31 +1,33 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotValidException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmServiceImpl;
 
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
-    final FilmServiceImpl filmService;
-
-    @Autowired
-    public FilmController(FilmServiceImpl filmService) {
-        this.filmService = filmService;
-    }
+    private final FilmServiceImpl filmService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Film> getUser(@PathVariable Long id) {
+    public ResponseEntity<Film> findUser(@PathVariable Long id) {
         log.info("Entered GET film");
-        return ResponseEntity.ok().body(filmService.filmStorage.getFilm(id));
+        return ResponseEntity.ok().body(filmService.filmStorage.findFilm(id));
     }
 
     @PostMapping
@@ -62,5 +64,17 @@ public class FilmController {
     public ResponseEntity<List<Film>> getAllFilms() {
         log.info("Entered GET film");
         return ResponseEntity.ok().body(filmService.filmStorage.getAll());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler
+    public Map<String, String> handleNotExistingFilm(final FilmNotExistException e) {
+        return Map.of("error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public Map<String, String> handleNotValidFilm(final FilmNotValidException e) {
+        return Map.of("error", e.getMessage());
     }
 }

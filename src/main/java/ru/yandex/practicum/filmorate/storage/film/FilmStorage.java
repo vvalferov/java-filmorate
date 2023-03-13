@@ -11,7 +11,7 @@ public interface FilmStorage {
 
     Film editFilm(Film film);
 
-    Film getFilm(Long id);
+    Film findFilm(Long id);
 
     List<Film> getAll();
 }

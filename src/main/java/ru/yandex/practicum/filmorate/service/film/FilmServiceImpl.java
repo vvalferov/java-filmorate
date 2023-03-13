@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service.film;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,24 +12,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
     public final FilmStorage filmStorage;
 
-    @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-    }
-
     @Override
     public Boolean addLike(Long id, Long userId) {
-        Film film = filmStorage.getFilm(id);
+        Film film = filmStorage.findFilm(id);
         film.getLikes().add(userId);
         return true;
     }
 
     @Override
     public Boolean removeLike(Long id, Long userId) {
-        Film film = filmStorage.getFilm(id);
+        Film film = filmStorage.findFilm(id);
         if (film.getLikes().contains(userId))
             film.getLikes().remove(userId);
         else
