@@ -1,14 +1,16 @@
-package ru.yandex.practicum.filmorate.services;
+package ru.yandex.practicum.filmorate.storage;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceImplTest {
-    UserService userService = new UserServiceImpl();
+    UserStorage userService = new InMemoryUserStorage();
     User user = new User(1L, "dudka@trubnik.ru", "login", "name", LocalDate.of(2011, 12, 11));
     User editedUser = new User(1L, "newDudka@trubnik.ru", "login", "name", LocalDate.of(2011, 12, 11));
 

@@ -1,7 +1,7 @@
-package ru.yandex.practicum.filmorate.services;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@Service
-public class UserServiceImpl implements UserService {
+@Component
+public class InMemoryUserStorage implements UserStorage {
     private final List<User> allUsers = new ArrayList<>();
     private long currentId = 1;
 
@@ -38,15 +38,15 @@ public class UserServiceImpl implements UserService {
             throw new UserNotValidException(user.getId());
         long id = user.getId();
         User oldUser = getUserById(id);
-        //User oldUser = allUsers.get(0);
-        if (oldUser != null) {
-            allUsers.remove(oldUser);
-            allUsers.add(user);
-            log.info("User {} has been edited", id);
-            return getUserById(id);
-        } else {
-            throw new UserNotExistException(id);
-        }
+        allUsers.remove(oldUser);
+        allUsers.add(user);
+        log.info("User {} has been edited", id);
+        return getUserById(id);
+    }
+
+    @Override
+    public User findUser(Long id) {
+        return getUserById(id);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         log.error("User {} was not found", id);
-        return null;
+        throw new UserNotExistException(id);
     }
 
     private boolean isUserValid(User user) {
