@@ -2,44 +2,53 @@ package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.likes.LikesStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
     public final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final LikesStorage likesStorage;
+    private final GenreStorage genreStorage;
 
     @Override
     public Boolean addLike(Long id, Long userId) {
-        Film film = filmStorage.findFilm(id);
-        film.getLikes().add(userId);
+        checkExistence(id, userId);
+        likesStorage.add(id, userId);
         return true;
     }
 
     @Override
     public Boolean removeLike(Long id, Long userId) {
-        Film film = filmStorage.findFilm(id);
-        if (film.getLikes().contains(userId))
-            film.getLikes().remove(userId);
-        else
-            throw new UserNotExistException(userId);
+        checkExistence(id, userId);
+        likesStorage.remove(id, userId);
         return true;
     }
 
     @Override
-    public Collection<Film> getMostPopularFilms(Integer count) {
-        List<Film> films = new LinkedList<>(filmStorage.getAll());
-        Comparator<Film> comparator = Comparator.comparingInt(Film::getLikesCount).reversed();
-        films.sort(comparator);
-        if (count > films.size())
-            count = films.size();
-        return films.subList(0, count);
+    public List<Film> getMostPopularFilms(Integer count) {
+        List<Film> films = likesStorage.getMostPopularFilms(count);
+        Map<Long, Set<Genre>> genres = genreStorage.getGenres(films);
+        for (Film film : films) {
+            film.setGenres(genres.getOrDefault(film.getId(), new LinkedHashSet<>()));
+        }
+        return films;
+    }
+
+    private void checkExistence(Long filmId, Long userId) {
+        if (filmStorage.findFilm(filmId) == null)
+            throw new FilmNotExistException(filmId);
+        if (userStorage.findUser(userId) == null)
+            throw new UserNotValidException(userId);
     }
 }

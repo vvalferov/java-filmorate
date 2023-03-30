@@ -25,7 +25,7 @@ public class FilmController {
     private final FilmServiceImpl filmService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Film> findUser(@PathVariable Long id) {
+    public ResponseEntity<Film> findFilm(@PathVariable Long id) {
         log.info("Entered GET film");
         return ResponseEntity.ok().body(filmService.filmStorage.findFilm(id));
     }
