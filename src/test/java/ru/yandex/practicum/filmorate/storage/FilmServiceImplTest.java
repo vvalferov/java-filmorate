@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FilmServiceImplTest {
     FilmStorage filmService = new InMemoryFilmStorage();

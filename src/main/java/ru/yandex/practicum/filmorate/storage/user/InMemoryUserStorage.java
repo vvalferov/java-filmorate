@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.utils.Validator;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,10 +16,11 @@ import java.util.Objects;
 public class InMemoryUserStorage implements UserStorage {
     private final List<User> allUsers = new ArrayList<>();
     private long currentId = 1;
+    private final Validator validator = new Validator();
 
     @Override
     public User addUser(User user) {
-        if (isUserValid(user) && !allUsers.contains(user)) {
+        if (!validator.isUserInvalid(user) && !allUsers.contains(user)) {
             Long id = user.getId();
             if (id == null) {
                 user.setId(getCurrentId());
@@ -34,8 +35,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User editUser(User user) {
-        if (!isUserValid(user))
+        if (validator.isUserInvalid(user)) {
             throw new UserNotValidException(user.getId());
+        }
         long id = user.getId();
         User oldUser = getUserById(id);
         allUsers.remove(oldUser);
@@ -63,18 +65,6 @@ public class InMemoryUserStorage implements UserStorage {
         }
         log.error("User {} was not found", id);
         throw new UserNotExistException(id);
-    }
-
-    private boolean isUserValid(User user) {
-        if (user.getLogin().contains(" ") || user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Fields of user {} seem to be invalid", user.getLogin());
-            return false;
-        }
-        if (user.getName() == null || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-            log.info("User's name was changed to {}", user.getName());
-        }
-        return true;
     }
 
     private long getCurrentId() {

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.utils.Validator;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +15,11 @@ import java.util.List;
 public class InMemoryFilmStorage implements FilmStorage {
     private final List<Film> allFilms = new ArrayList<>();
     private long currentId = 1;
+    private final Validator validator = new Validator();
 
     @Override
     public Film addFilm(Film film) {
-        if (isFilmValid(film) && !allFilms.contains(film)) {
+        if (!validator.isFilmInvalid(film) && !allFilms.contains(film)) {
             Long id = film.getId();
             if (id == null) {
                 film.setId(getCurrentId());
@@ -33,8 +34,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film editFilm(Film film) {
-        if (!isFilmValid(film))
+        if ((validator.isFilmInvalid(film))) {
             throw new FilmNotValidException(film.getId());
+        }
         long id = film.getId();
         Film oldFilm = getFilmById(id);
         allFilms.remove(oldFilm);
@@ -62,14 +64,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         log.error("Film {} was not found", id);
         throw new FilmNotExistException(id);
-    }
-
-    private boolean isFilmValid(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.error("Fields of film {} seem to be invalid", film.getId());
-            return false;
-        }
-        return true;
     }
 
     private long getCurrentId() {
