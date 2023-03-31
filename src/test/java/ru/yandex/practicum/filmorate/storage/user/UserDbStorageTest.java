@@ -52,7 +52,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void editUser() {// +findUser
+    void editUser() { // +findUser
         userDbStorage.editUser(editedUser);
         assertEquals(editedUser, userDbStorage.findUser(user.getId()));
     }
