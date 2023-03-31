@@ -32,10 +32,12 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        if (validator.isFilmInvalid(film))
+        if (validator.isFilmInvalid(film)) {
             throw new FilmNotValidException(film.getId());
-        if (film.getGenres() != null && film.getId() != null)
+        }
+        if (film.getGenres() != null && film.getId() != null) {
             genreStorage.setGenres(film.getId(), film.getGenres());
+        }
         String sql = "INSERT INTO FILMS(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -49,18 +51,21 @@ public class FilmDbStorage implements FilmStorage {
             return stmt;
         }, keyHolder);
         film.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
-        if (film.getGenres() != null && film.getId() != null)
+        if (film.getGenres() != null && film.getId() != null) {
             genreStorage.setGenres(film.getId(), film.getGenres());
+        }
         log.info("Film {} has been added to list", film.getId());
         return setGenres(film);
     }
 
     @Override
     public Film editFilm(Film film) {
-        if (validator.isFilmInvalid(film))
+        if (validator.isFilmInvalid(film)) {
             throw new FilmNotValidException(film.getId());
-        if (film.getGenres() != null && film.getId() != null)
+        }
+        if (film.getGenres() != null && film.getId() != null) {
             genreStorage.setGenres(film.getId(), film.getGenres());
+        }
         String sql = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? " +
                 "WHERE FILM_ID = ?";
         int filmStatus = jdbcTemplate.update(sql,

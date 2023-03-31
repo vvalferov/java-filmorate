@@ -35,8 +35,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User editUser(User user) {
-        if (validator.isUserInvalid(user))
+        if (validator.isUserInvalid(user)) {
             throw new UserNotValidException(user.getId());
+        }
         long id = user.getId();
         User oldUser = getUserById(id);
         allUsers.remove(oldUser);

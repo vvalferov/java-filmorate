@@ -49,9 +49,11 @@ public class FilmServiceImpl implements FilmService {
     }
 
     private void checkExistence(Long filmId, Long userId) {
-        if (filmStorage.findFilm(filmId) == null)
+        if (filmStorage.findFilm(filmId) == null) {
             throw new FilmNotExistException(filmId);
-        if (userStorage.findUser(userId) == null)
+        }
+        if (userStorage.findUser(userId) == null) {
             throw new UserNotValidException(userId);
+        }
     }
 }

@@ -28,8 +28,9 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User addUser(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        if (validator.isUserInvalid(user))
+        if (validator.isUserInvalid(user)) {
             throw new UserNotValidException(user.getId());
+        }
         String sql = "INSERT INTO USERS(email, login, name, birthday) VALUES (?, ?, ?, ?)";
         try {
             jdbcTemplate.update(connection -> {
@@ -52,8 +53,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User editUser(User user) {
-        if (validator.isUserInvalid(user))
+        if (validator.isUserInvalid(user)) {
             throw new UserNotValidException(user.getId());
+        }
         String sql = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? WHERE USER_ID = ?";
         if (jdbcTemplate.update(sql, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId()) < 1) {
             throw new UserNotExistException(user.getId());

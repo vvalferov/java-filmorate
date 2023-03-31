@@ -34,8 +34,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film editFilm(Film film) {
-        if ((validator.isFilmInvalid(film)))
+        if ((validator.isFilmInvalid(film))) {
             throw new FilmNotValidException(film.getId());
+        }
         long id = film.getId();
         Film oldFilm = getFilmById(id);
         allFilms.remove(oldFilm);

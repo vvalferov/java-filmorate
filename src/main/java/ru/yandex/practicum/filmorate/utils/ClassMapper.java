@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.utils;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@UtilityClass
+@Component
 public class ClassMapper {
     public static User rowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         return User.builder()
