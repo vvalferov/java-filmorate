@@ -46,7 +46,6 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Map<Long, Set<Genre>> getGenresAsMap(List<Film> films) {
         Map<Long, Set<Genre>> allGenres = new HashMap<>();
-
         String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
         String sql = "SELECT AG.*, G.GENRE_NAME FROM ALL_GENRES AG " +
                 "JOIN GENRE G on G.GENRE_ID = AG.GENRE_ID " +

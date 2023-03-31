@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllFriends(Long id) {
-        return friendsStorage.getFriend(id);
+        return friendsStorage.findFriend(id);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         checkUserExistence(id);
         checkUserExistence(otherId);
 
-        return friendsStorage.getMutual(id, otherId);
+        return friendsStorage.findMutual(id, otherId);
     }
 
     private void checkUserExistence(Long userId) {

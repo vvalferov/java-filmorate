@@ -16,7 +16,7 @@ public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<User> getFriend(Long id) {
+    public List<User> findFriend(Long id) {
         String sql = "SELECT U.* " +
                 "FROM FRIEND_STATUS AS F " +
                 "JOIN USERS AS U ON F.FRIEND_ID = U.USER_ID " +
@@ -32,7 +32,7 @@ public class FriendsDbStorage implements FriendsStorage {
     }
 
     @Override
-    public List<User> getMutual(Long id, Long friendId) {
+    public List<User> findMutual(Long id, Long friendId) {
         String sql = "SELECT u.* FROM USERS u, FRIEND_STATUS f, FRIEND_STATUS s " +
                 "WHERE u.USER_ID = f.FRIEND_ID " +
                 "  AND u.USER_ID = s.FRIEND_ID " +
