@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -62,11 +61,6 @@ class FilmDbStorageTest {
             .genres(new LinkedHashSet<>())
             .build();
 
-    @BeforeEach
-    void addFilmToDb() {
-        filmDbStorage.addFilm(film);
-    }
-
     @Test
     void addFilm() {
         assertEquals(film, filmDbStorage.findFilm(film.getId()));
@@ -80,12 +74,13 @@ class FilmDbStorageTest {
 
     @Test
     void getAll() {
+        filmDbStorage.addFilm(film);
         filmDbStorage.addFilm(oneMoreFilm);
         assertEquals(2, filmDbStorage.getAll().size());
     }
 
     @Test
     void findFilm() {
-        assertEquals(film, filmDbStorage.findFilm(4L));
+        assertEquals(film, filmDbStorage.findFilm(1L));
     }
 }
