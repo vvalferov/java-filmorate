@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.utils.Validator;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

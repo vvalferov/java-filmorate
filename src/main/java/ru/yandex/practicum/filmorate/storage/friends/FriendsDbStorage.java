@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.utils.Mapper;
+import ru.yandex.practicum.filmorate.utils.ClassMapper;
 
 import java.util.List;
 
@@ -16,36 +16,34 @@ public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<User> get(Long id) {
-        String sqlQuery = "select U.* " +
-            "from FRIEND_STATUS as FS " +
-            "join USERS as U on FS.FRIEND_ID = U.USER_ID " +
-            "where FS.USER_ID = ?";
-        return jdbcTemplate.query(sqlQuery, Mapper::mapRowToUser, id);
+    public List<User> getFriend(Long id) {
+        String sql = "SELECT U.* " +
+                "FROM FRIEND_STATUS AS F " +
+                "JOIN USERS AS U ON F.FRIEND_ID = U.USER_ID " +
+                "WHERE F.USER_ID = ?";
+        log.info("Entered GET friend");
+        return jdbcTemplate.query(sql, ClassMapper::rowToUser, id);
     }
 
     @Override
-    public void add(Long id, Long friendId) {
-        String sqlQuery = "insert into FRIEND_STATUS(user_id, friend_id) " +
-            "values ( ?, ? )";
-        jdbcTemplate.update(sqlQuery, id, friendId);
+    public void addFriend(Long id, Long friendId) {
+        String sql = "INSERT INTO FRIEND_STATUS(user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, id, friendId);
     }
 
     @Override
     public List<User> getMutual(Long id, Long friendId) {
-        String sqlQuery = "SELECT u.* " +
-            "FROM USERS u, FRIEND_STATUS f, FRIEND_STATUS o " +
-            "WHERE u.USER_ID = f.FRIEND_ID " +
-            "  AND u.USER_ID = o.FRIEND_ID " +
-            "  AND f.USER_ID = ? " +
-            "  AND o.USER_ID = ?";
-        return jdbcTemplate.query(sqlQuery, Mapper::mapRowToUser, id, friendId);
+        String sql = "SELECT u.* FROM USERS u, FRIEND_STATUS f, FRIEND_STATUS s " +
+                "WHERE u.USER_ID = f.FRIEND_ID " +
+                "  AND u.USER_ID = s.FRIEND_ID " +
+                "  AND f.USER_ID = ? " +
+                "  AND s.USER_ID = ?";
+        return jdbcTemplate.query(sql, ClassMapper::rowToUser, id, friendId);
     }
 
     @Override
-    public void remove(Long id, Long friendId) {
-        String sqlQuery = "delete from FRIEND_STATUS " +
-            "where USER_ID = ? and FRIEND_ID = ?";
-        jdbcTemplate.update(sqlQuery, id, friendId);
+    public void removeFriend(Long id, Long friendId) {
+        String sql = "DELETE FROM FRIEND_STATUS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        jdbcTemplate.update(sql, id, friendId);
     }
 }

@@ -9,10 +9,15 @@ import java.util.Set;
 
 
 public interface GenreStorage {
-    Genre get(Long id);
+    Genre getGenre(Long id);
+
     List<Genre> getAll();
+
     Set<Genre> getGenres(Long filmId);
-    Map<Long, Set<Genre>> getGenres(List<Film> films);
+
+    Map<Long, Set<Genre>> getGenresAsMap(List<Film> films);
+
     void setGenres(Long filmId, Set<Genre> genres);
+
     void removeGenres(Long filmId);
 }

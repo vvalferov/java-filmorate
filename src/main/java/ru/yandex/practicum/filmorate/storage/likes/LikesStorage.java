@@ -5,8 +5,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 
 public interface LikesStorage {
-    List<Long> get(Long filmId);
-    void add(Long filmId, Long userId);
-    void remove(Long filmId, Long userId);
+    List<Long> getLike(Long filmId);
+
+    void addLike(Long filmId, Long userId);
+
+    void removeLike(Long filmId, Long userId);
+
     List<Film> getMostPopularFilms(int count);
 }

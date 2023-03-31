@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MpaServiceImpl implements MpaService{
+public class MpaServiceImpl implements MpaService {
     private final MpaStorage mpaStorage;
 
     public List<Mpa> getAllMpas() {
@@ -17,6 +17,6 @@ public class MpaServiceImpl implements MpaService{
     }
 
     public Mpa getMpaById(Long id) {
-        return mpaStorage.get(id);
+        return mpaStorage.getMpa(id);
     }
 }

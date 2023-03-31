@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -13,7 +12,7 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
-import ru.yandex.practicum.filmorate.utils.Mapper;
+import ru.yandex.practicum.filmorate.utils.ClassMapper;
 import ru.yandex.practicum.filmorate.utils.Validator;
 
 import java.sql.Date;
@@ -37,11 +36,11 @@ public class FilmDbStorage implements FilmStorage {
             throw new FilmNotValidException(film.getId());
         if (film.getGenres() != null && film.getId() != null)
             genreStorage.setGenres(film.getId(), film.getGenres());
-        String sqlQuery = "insert into FILMS(name, description, release_date, duration, mpa_id) values (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO FILMS(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"film_id"});
+            PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"film_id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -52,6 +51,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
         if (film.getGenres() != null && film.getId() != null)
             genreStorage.setGenres(film.getId(), film.getGenres());
+        log.info("Film {} has been added to list", film.getId());
         return setGenres(film);
     }
 
@@ -61,9 +61,9 @@ public class FilmDbStorage implements FilmStorage {
             throw new FilmNotValidException(film.getId());
         if (film.getGenres() != null && film.getId() != null)
             genreStorage.setGenres(film.getId(), film.getGenres());
-        String sqlQuery = "update FILMS set NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? " +
-                "where FILM_ID = ?";
-        int status = jdbcTemplate.update(sqlQuery,
+        String sql = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? " +
+                "WHERE FILM_ID = ?";
+        int filmStatus = jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
@@ -71,37 +71,38 @@ public class FilmDbStorage implements FilmStorage {
                 film.getMpa().getId(),
                 film.getId()
         );
-        if (status == 0) {
+        if (filmStatus == 0) {
             throw new FilmNotExistException(film.getId());
         }
+        log.info("Film {} has been edited", film.getId());
         return setGenres(film);
     }
 
     @Override
+    public List<Film> getAll() {
+        String sql = "SELECT F.*, M.MPA_NAME FROM FILMS AS F " +
+                "LEFT JOIN LIKES L on F.FILM_ID = L.FILM_ID " +
+                "LEFT JOIN MPA M on M.MPA_ID = F.MPA_ID";
+        List<Film> films = jdbcTemplate.query(sql, ClassMapper::rowToFilm);
+        for (Film film : films) {
+            setGenres(film);
+        }
+        log.info("All films have been uploaded");
+        return films;
+    }
+
+    @Override
     public Film findFilm(Long id) {
-        String sqlQuery = "SELECT F.*, M.MPA_NAME " +
-                "FROM FILMS AS F " +
+        String sql = "SELECT F.*, M.MPA_NAME FROM FILMS AS F " +
                 "LEFT JOIN LIKES L on F.FILM_ID = L.FILM_ID " +
                 "LEFT JOIN MPA M on M.MPA_ID = F.MPA_ID " +
                 "WHERE F.FILM_ID = ?;";
         try {
-            return setGenres(Objects.requireNonNull(jdbcTemplate.queryForObject(sqlQuery, Mapper::mapRowToFilm, id)));
+            return setGenres(Objects.requireNonNull(jdbcTemplate.queryForObject(sql, ClassMapper::rowToFilm, id)));
         } catch (Exception e) {
+            log.error("Film {} was not found", id);
             throw new FilmNotExistException(id);
         }
-    }
-
-    @Override
-    public List<Film> getAll() {
-        String sqlQuery = "SELECT F.*, M.MPA_NAME " +
-                "FROM FILMS AS F " +
-                "LEFT JOIN LIKES L on F.FILM_ID = L.FILM_ID " +
-                "LEFT JOIN MPA M on M.MPA_ID = F.MPA_ID";
-        List<Film> films = jdbcTemplate.query(sqlQuery, Mapper::mapRowToFilm);
-        for (Film film : films) {
-            setGenres(film);
-        }
-        return films;
     }
 
     private Film setGenres(Film film) {

@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotExistException;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotValidException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotExistException;
-import ru.yandex.practicum.filmorate.exceptions.UserNotValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmServiceImpl;
 

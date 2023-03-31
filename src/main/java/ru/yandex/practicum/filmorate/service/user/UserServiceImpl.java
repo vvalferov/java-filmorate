@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
         checkUserExistence(id);
         checkUserExistence(friendId);
 
-        friendsStorage.add(id, friendId);
+        friendsStorage.addFriend(id, friendId);
         return true;
     }
 
@@ -29,13 +29,13 @@ public class UserServiceImpl implements UserService {
         checkUserExistence(id);
         checkUserExistence(friendId);
 
-        friendsStorage.remove(id, friendId);
+        friendsStorage.removeFriend(id, friendId);
         return true;
     }
 
     @Override
     public List<User> getAllFriends(Long id) {
-        return friendsStorage.get(id);
+        return friendsStorage.getFriend(id);
     }
 
     @Override

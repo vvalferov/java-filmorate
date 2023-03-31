@@ -19,6 +19,6 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Genre getGenreById(Long id) {
-        return genreStorage.get(id);
+        return genreStorage.getGenre(id);
     }
 }
